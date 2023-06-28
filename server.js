@@ -34,9 +34,7 @@ app.get('/', function(요청, 응답){
 });
 
 //write 보여주는
-app.get('/guest_message', (요청, 응답) => {
-    응답.sendFile(__dirname+ '/write.html')
-})
+
 
 //post 요청 처리
 
@@ -46,7 +44,10 @@ app.post('/add', function(요청, 응답){
     db.collection('guestmessage').insertOne({_id: (총게시물갯수+1), 받는이: 요청.body.toName, 보내는이: 요청.body.fromName, 내용: 요청.body.message, 비밀번호: 요청.body.password}, function(){
       db.collection('counter').updateOne( {name : '게시물갯수' } , { $inc : { totalPost : 1 } } , function(에러, 결과){
         if(에러){return console.log(에러)}
-        응답.send('전송완료');
+
+        return 응답.redirect('/list');
+        
+        
       })
     });
   });
@@ -54,20 +55,24 @@ app.post('/add', function(요청, 응답){
   });
 
 
-
-//
-app.get('/list', function(요청, 응답){
-  db.collection('guestmessage').find().toArray(function(에러, 결과){
-    console.log(결과)
-    응답.render('list.ejs', {posts: 결과})
+  app.get('/list', function(요청, 응답){
+    db.collection('guestmessage').find().toArray(function(에러, 결과){
+      console.log(결과)
+      응답.render('list.ejs', {posts: 결과})
+    })
   })
-})
 
 //delete
 app.delete('/delete', function(요청, 응답){
-  요청.body._id = parseInt(요청.body._id)
-  db.collection('guestmessage').deleteOne(요청.body, function(에러, 결과){
-    console.log('삭제완료')
+  요청.body._id = parseInt(요청.body._id);
+  console.log(요청.body)
+  db.collection('guestmessage').deleteOne({_id: 요청.body._id}, function(에러, 결과){
+
   })
-  응답.send('삭제완료')
+  응답.status(200).send({message:'삭제완료'})
+
 })
+
+
+
+//

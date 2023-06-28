@@ -15,25 +15,58 @@
             <p>TO: <%= posts[i].받는이 %></p>
             <p>FROM: <%= posts[i].보내는이 %></p>
             <p><%= posts[i].내용 %></p>
-          <button class="delete">삭제</button>
+          <button class="delete" data-id="<%= posts[i]._id %>">삭제</button>
         </li>
         <% } %>
     </ul>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script>
-    //서버에 ajax delete 요청 날리기
-    $('.delete').click(function(){
-        $.ajax({
-            method:'DELETE',
-            url:'/delete',
-            data: {_id:e.target.dataset.id}
-        }).done(function(결과){
-            //ajax성공시 실행할 코드는 여기
-            $(this).parent('li').fadeOut();
-        })
-    })
+    <div class="container">
+      <form id='addForm' action="/add" method="post">
+          <div class="textArea">
+              <div class="to">
+                  <span class="box">TO</span>
+                  <input type="text" placeholder="이름" name="toName">
+              </div>
+              <div class="from">
+                  <span class="box">FROM</span>
+                  <input type="text" placeholder="이름" name="fromName">
+              </div>
 
-</script>  
+              <textarea name="message" id="message" cols="30" rows="10" placeholder="메세지를 입력하세요."></textarea>
+              <div class="password">
+                  <span class="box">password</span>
+                  <input type="password" id = 'password' placeholder="****" name="password" maxlength="4">
+              </div>
+          </div>
+          <button type="submit" class="btn">보내기</button>
+      </form>
+      
+      <div class="showText">
+
+      </div>
+
+
+    <script
+  src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script>
+        //서버에 ajax delete 요청 날리기
+        $('.delete').click(function(e){
+
+              console.log(e.target.dataset.비밀번호)
+              $.ajax({
+                  method:'DELETE',
+                  url:'/delete',
+                  data: {_id:e.target.dataset.id}
+              }).done((결과)=>{
+                  //ajax성공시 실행할 코드는 여기
+                  $(this).parent('li').fadeOut();
+              }).fail((err)=>{
+                console.log('실패');
+              })
+            }
+
+        )
+
+    </script>  
 </body>
 </html>
